@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function startQuestionTimer() {
-        let timeLeft = 60;
+        let timeLeft = 180;
         questionTimerSpan.textContent = timeLeft;
         questionTimer = setInterval(() => {
             timeLeft--;
