@@ -1,0 +1,101 @@
+## JSON Structure for Questions
+
+
+To create a question list, use the following JSON structure. Each question is an object in an array, and each object must have a `"type"` key.
+
+
+### Multiple-Choice Question (`mcq`)
+
+
+```json
+
+{
+
+    "type": "mcq",
+
+    "question": "What is the capital of France?",
+
+    "options": ["London", "Paris", "Berlin", "Madrid"],
+
+    "answer": "Paris"
+
+}
+
+```
+
+
+*   `"type"`: Must be `"mcq"`.
+
+*   `"question"`: The question text (string).
+
+*   `"options"`: An array of strings representing the possible answers.
+
+*   `"answer"`: The correct answer (string), which must match one of the options.
+
+
+### Written Question (`written`)
+
+
+```json
+
+{
+
+    "type": "written",
+
+    "question": "Explain the difference between 'let' and 'const' in JavaScript."
+
+}
+
+```
+
+
+*   `"type"`: Must be `"written"`.
+
+*   `"question"`: The question text (string).
+
+
+### Example `questions.json` File
+
+
+```json
+
+[
+
+    {
+
+        "type": "mcq",
+
+        "question": "What is 2 + 2?",
+
+        "options": ["3", "4", "5", "6"],
+
+        "answer": "4"
+
+    },
+
+    {
+
+        "type": "written",
+
+        "question": "What are the three primary colors?"
+
+    },
+
+    {
+
+        "type": "mcq",
+
+        "question": "Which planet is known as the Red Planet?",
+
+        "options": ["Earth", "Mars", "Jupiter", "Venus"],
+
+        "answer": "Mars"
+
+    }
+
+]
+
+```
+
+Write questions according to the chapters I have provided. The questions should be MCQ and open ended. They should be deceiving and contain terminology that seems correct. Use the documents provided to write questions related to the topics discussed. The questions should not require memorization of certain numbers/pointless information. Instead, it should focus on key topics, and key concepts.
+Write 15 MCQs and 3 open ended questions per chapter.
