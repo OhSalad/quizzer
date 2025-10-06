@@ -17,9 +17,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const progressText = document.getElementById('progress-text');
     const globalTimerDisplay = document.getElementById('global-timer-display');
     const uploadButton = document.getElementById('upload-button');
+    const modeScreen = document.getElementById('mode-screen');
+    const reviewModeButton = document.getElementById('review-mode-button');
+    const takeModeButton = document.getElementById('take-mode-button');
     const writtenResultsContainer = document.getElementById('written-results-container');
     const writtenAnswersDisplay = document.getElementById('written-answers-display');
     const copyWrittenButton = document.getElementById('copy-written-button');
+    const homeButton = document.getElementById('home-button');
 
     // --- State Variables ---
     let questions = [];
@@ -30,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let globalTimer;
     let globalTime = 0;
     let mcqCount = 0;
+    let mode = 'take'; // 'take' or 'review'
 
     // --- Functions ---
 
@@ -69,7 +74,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            startQuiz();
+            // Show mode selection screen so user can choose to review or take the quiz
+            startScreen.classList.add('hidden');
+            modeScreen.classList.remove('hidden');
         };
         reader.onerror = () => {
             alert('Error reading file.');
@@ -79,8 +86,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function startQuiz() {
         startScreen.classList.add('hidden');
+        modeScreen.classList.add('hidden');
         resultScreen.classList.add('hidden');
         quizScreen.classList.remove('hidden');
+        homeButton.classList.remove('hidden');
         currentQuestionIndex = 0;
         score = 0;
         globalTime = 0;
@@ -90,6 +99,16 @@ document.addEventListener('DOMContentLoaded', () => {
         showQuestion();
         startGlobalTimer();
     }
+
+    // Mode button handlers
+    reviewModeButton.addEventListener('click', () => {
+        mode = 'review';
+        startQuiz();
+    });
+    takeModeButton.addEventListener('click', () => {
+        mode = 'take';
+        startQuiz();
+    });
 
     function shuffleQuestions() {
         for (let i = questions.length - 1; i > 0; i--) {
@@ -119,12 +138,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 const button = document.createElement('button');
                 button.textContent = option;
                 button.classList.add('option');
-                button.addEventListener('click', () => selectAnswer(button, question.answer));
+                // In 'take' mode the user can select an option. In 'review' mode we simply show correct answer immediately.
+                if (mode === 'take') {
+                    button.addEventListener('click', () => selectAnswer(button, question.answer));
+                }
                 optionsContainer.appendChild(button);
             });
-            startQuestionTimer();
+            if (mode === 'take') {
+                startQuestionTimer();
+            } else if (mode === 'review') {
+                // Immediately highlight answers in review mode
+                const options = optionsContainer.querySelectorAll('.option');
+                options.forEach(opt => {
+                    opt.disabled = true;
+                    if (opt.textContent === question.answer) {
+                        opt.classList.add('correct');
+                    }
+                });
+                // No per-question timer in review mode
+                questionTimerSpan.textContent = '--';
+            }
         } else if (question.type === 'written') {
             writtenAnswerInput.classList.remove('hidden');
+            // In review mode, show the provided answer (if any) and make readonly. In take mode, allow typing.
+            if (mode === 'review') {
+                writtenAnswerInput.value = question.answer || '';
+                writtenAnswerInput.disabled = true;
+            } else {
+                writtenAnswerInput.value = '';
+                writtenAnswerInput.disabled = false;
+            }
             questionTimerSpan.textContent = '--';
         }
         nextButton.classList.remove('hidden');
@@ -135,6 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
         optionsContainer.innerHTML = '';
         optionsContainer.classList.add('hidden');
         writtenAnswerInput.value = '';
+        writtenAnswerInput.disabled = false;
         writtenAnswerInput.classList.add('hidden');
         nextButton.classList.add('hidden');
     }
@@ -159,27 +203,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function selectAnswer(selectedButton, correctAnswer) {
-        clearInterval(questionTimer);
-        const options = optionsContainer.querySelectorAll('.option');
-        options.forEach(option => {
-            option.disabled = true;
-            if (option.textContent === correctAnswer) {
-                option.classList.add('correct');
-            } else if (option === selectedButton) {
-                option.classList.add('wrong');
+        if (mode === 'take') {
+            clearInterval(questionTimer);
+            const options = optionsContainer.querySelectorAll('.option');
+            options.forEach(option => {
+                option.disabled = true;
+                if (option.textContent === correctAnswer) {
+                    option.classList.add('correct');
+                } else if (option === selectedButton) {
+                    option.classList.add('wrong');
+                }
+            });
+            if (selectedButton && selectedButton.textContent === correctAnswer) {
+                score++;
             }
-        });
-        if (selectedButton && selectedButton.textContent === correctAnswer) {
-            score++;
+        } else if (mode === 'review') {
+            // In review mode selection shouldn't happen, but provide a safe no-op that ensures correct is highlighted
+            const options = optionsContainer.querySelectorAll('.option');
+            options.forEach(option => {
+                option.disabled = true;
+                if (option.textContent === correctAnswer) option.classList.add('correct');
+            });
         }
     }
 
     function handleNextQuestion() {
         const currentQuestion = questions[currentQuestionIndex];
         if (currentQuestion.type === 'written') {
+            const answerVal = mode === 'review' ? (currentQuestion.answer || '') : writtenAnswerInput.value;
             writtenAnswers.push({
                 question: currentQuestion.question,
-                answer: writtenAnswerInput.value
+                answer: answerVal
             });
         }
         currentQuestionIndex++;
@@ -194,6 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
         clearInterval(globalTimer);
         quizScreen.classList.add('hidden');
         resultScreen.classList.remove('hidden');
+        homeButton.classList.add('hidden');
         scoreSpan.textContent = mcqCount > 0 ? `${score} / ${mcqCount}` : 'N/A';
         globalTimerSpan.textContent = `${globalTime} seconds`;
 
@@ -243,6 +298,23 @@ document.addEventListener('DOMContentLoaded', () => {
         darkModeToggle.textContent = darkMode ? '☀️' : '🌙';
     }
 
+    function resetToHome() {
+        clearInterval(questionTimer);
+        clearInterval(globalTimer);
+        quizScreen.classList.add('hidden');
+        resultScreen.classList.add('hidden');
+        modeScreen.classList.add('hidden');
+        startScreen.classList.remove('hidden');
+        homeButton.classList.add('hidden');
+        // Reset state variables
+        questions = [];
+        writtenAnswers = [];
+        currentQuestionIndex = 0;
+        score = 0;
+        globalTime = 0;
+        mode = 'take';
+    }
+
     // --- Event Listeners ---
     darkModeToggle.addEventListener('click', () => {
         document.body.classList.toggle('dark-mode');
@@ -265,6 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
     nextButton.addEventListener('click', handleNextQuestion);
     retakeButton.addEventListener('click', startQuiz);
     copyWrittenButton.addEventListener('click', copyWrittenResults);
+    homeButton.addEventListener('click', resetToHome);
 
     // --- Initial Run ---
     applyDarkMode();

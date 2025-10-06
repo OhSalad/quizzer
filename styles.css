@@ -63,6 +63,13 @@ body.dark-mode {
 .header {
     text-align: right;
     margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.spacer {
+    flex: 1;
 }
 
 #dark-mode-toggle {
@@ -75,6 +82,22 @@ body.dark-mode {
     width: 40px;
     height: 40px;
     transition: background-color 0.3s, color 0.3s;
+}
+
+#home-button {
+    background-color: var(--primary-accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 600;
+    transition: background-color 0.3s;
+}
+
+#home-button:hover {
+    background-color: var(--primary-accent-hover);
 }
 
 #dark-mode-toggle:hover {
@@ -180,6 +203,32 @@ body.dark-mode #timer-container {
 #upload-button.drag-over {
     border-color: var(--primary-accent);
     background-color: var(--primary-accent-hover);
+}
+
+/* Mode selection styling */
+#mode-screen .mode-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 10px;
+}
+#mode-screen button {
+    padding: 12px 20px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+}
+#review-mode-button {
+    background-color: #17a2b8; /* info */
+    color: white;
+}
+#take-mode-button {
+    background-color: var(--primary-accent);
+    color: white;
+}
+#mode-screen button:hover {
+    opacity: 0.95;
 }
 
 #result-screen h2 {

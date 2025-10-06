@@ -13,6 +13,8 @@
     <div class="quiz-container">
         <!-- Header -->
         <div class="header">
+            <button id="home-button" class="hidden">Home</button>
+            <div class="spacer"></div>
             <button id="dark-mode-toggle">🌙</button>
         </div>
 
@@ -22,6 +24,15 @@
             <p>Drag and drop your JSON file onto the button, or click to select.</p>
             <button id="upload-button">Upload JSON File</button>
             <input type="file" id="file-input" accept=".json" class="hidden">
+        </div>
+
+        <!-- Mode Selection Screen (appears after upload) -->
+        <div id="mode-screen" class="hidden">
+            <h2>Choose how you want to proceed</h2>
+            <div class="mode-buttons">
+                <button id="review-mode-button">Review Answers</button>
+                <button id="take-mode-button">Take Quiz</button>
+            </div>
         </div>
 
         <!-- Quiz Screen -->
