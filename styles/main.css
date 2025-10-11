@@ -291,3 +291,109 @@ body.dark-mode #copy-written-button {
 body.dark-mode #copy-written-button:hover {
     background-color: var(--primary-accent);
 }
+
+/* History Section Styles */
+#history-section {
+    margin-top: 30px;
+    text-align: left;
+}
+
+#history-section h2 {
+    font-size: 1.3em;
+    margin-bottom: 15px;
+    color: var(--text-color);
+    text-align: center;
+}
+
+#history-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+/* Document Card Styles */
+.document-card {
+    background-color: var(--option-bg);
+    border: 2px solid transparent;
+    border-radius: 8px;
+    padding: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s, transform 0.2s;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.document-card:hover {
+    background-color: var(--option-hover-bg);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+.document-card-info {
+    flex: 1;
+    min-width: 0; /* Allow text truncation */
+}
+
+.document-card-title {
+    font-weight: 600;
+    font-size: 1em;
+    color: var(--text-color);
+    margin-bottom: 5px;
+    word-break: break-word;
+}
+
+.document-card-meta {
+    font-size: 0.85em;
+    color: #666;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+body.dark-mode .document-card-meta {
+    color: #a0a0a0;
+}
+
+.document-card-actions {
+    display: flex;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.document-card:hover .document-card-actions {
+    opacity: 1;
+}
+
+.delete-button {
+    background-color: var(--wrong-answer-bg);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-left: 10px;
+}
+
+.delete-button:hover {
+    background-color: #c82333;
+    transform: scale(1.1);
+}
+
+/* Empty State Styles */
+#history-empty-state {
+    text-align: center;
+    padding: 30px 20px;
+    color: #666;
+    font-style: italic;
+}
