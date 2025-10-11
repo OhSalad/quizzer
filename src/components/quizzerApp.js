@@ -20,6 +20,9 @@ class QuizzerApp extends HTMLElement {
         this.mode = 'take';
         this.hasAnsweredCurrent = false;
         this.handleCacheChanged = () => this.refreshHistory();
+        this.searchQuery = '';
+        this.sortBy = 'uploadDate';
+        this.allDocuments = [];
     }
 
     connectedCallback() {
@@ -27,6 +30,8 @@ class QuizzerApp extends HTMLElement {
         this.initializeDocumentCache();
         this.applyDarkMode();
         this.refreshHistory();
+        // Show search controls on start screen
+        this.header.setSearchVisibility(true);
         window.addEventListener('documentCacheChanged', this.handleCacheChanged);
     }
 
@@ -42,7 +47,9 @@ class QuizzerApp extends HTMLElement {
 
         this.header = new Header({
             onHome: () => this.resetToHome(),
-            onToggleDark: () => this.toggleDarkMode()
+            onToggleDark: () => this.toggleDarkMode(),
+            onSearch: (query) => this.handleSearch(query),
+            onSort: (sortBy) => this.handleSort(sortBy)
         });
         this.startScreen = new StartScreen({
             onFileSelected: (file) => this.handleFile(file),
@@ -72,7 +79,7 @@ class QuizzerApp extends HTMLElement {
         footer.className = 'app-footer';
         footer.innerHTML = `
             <p>✨ Learning with vibes</p>
-            <p>Keyboard shortcuts: <kbd>Tab</kbd> to navigate • <kbd>Enter</kbd> to select</p>
+            <p>Keyboard shortcuts: <kbd>Tab</kbd> to navigate • <kbd>Enter</kbd> to select • <kbd>Ctrl/Cmd + K</kbd> to search</p>
         `;
         container.appendChild(footer);
 
@@ -159,6 +166,7 @@ class QuizzerApp extends HTMLElement {
         this.startScreen.hide();
         this.resultScreen.hide();
         this.modeScreen.show();
+        this.header.setSearchVisibility(false);
     }
 
     startQuiz(mode) {
@@ -174,6 +182,7 @@ class QuizzerApp extends HTMLElement {
         this.startScreen.hide();
         this.quizScreen.show();
         this.header.setHomeVisibility(true);
+        this.header.setSearchVisibility(false);
         this.showCurrentQuestion();
         this.startGlobalTimer();
     }
@@ -276,6 +285,7 @@ class QuizzerApp extends HTMLElement {
         this.clearTimers();
         this.quizScreen.hide();
         this.header.setHomeVisibility(false);
+        this.header.setSearchVisibility(false);
         this.resultScreen.show();
         const scoreText = this.mcqCount > 0 ? `${this.score} / ${this.mcqCount}` : 'N/A';
         const totalTimeText = `${this.globalTime} seconds`;
@@ -328,12 +338,17 @@ class QuizzerApp extends HTMLElement {
         this.quizScreen.hide();
         this.resultScreen.hide();
         this.header.setHomeVisibility(false);
+        this.header.setSearchVisibility(true); // Always show search on start screen
         this.questions = [];
         this.writtenAnswers = [];
         this.currentQuestionIndex = 0;
         this.score = 0;
         this.globalTime = 0;
         this.mode = 'take';
+        this.searchQuery = '';
+        this.sortBy = 'uploadDate';
+        this.header.clearSearch();
+        this.header.setSortValue('uploadDate');
         this.refreshHistory();
     }
 
@@ -352,11 +367,12 @@ class QuizzerApp extends HTMLElement {
 
     refreshHistory() {
         if (!this.documentCache) {
+            this.allDocuments = [];
             this.startScreen.updateHistory([]);
             return;
         }
-        const documents = this.documentCache.getAllDocuments();
-        this.startScreen.updateHistory(documents);
+        this.allDocuments = this.documentCache.getAllDocuments();
+        this.updateFilteredHistory();
     }
 
     loadCachedDocument(documentId) {
@@ -392,6 +408,47 @@ class QuizzerApp extends HTMLElement {
             alert('Failed to delete document. Please try again.');
         }
         this.refreshHistory();
+    }
+
+    handleSearch(query) {
+        this.searchQuery = query.toLowerCase();
+        this.updateFilteredHistory();
+    }
+
+    handleSort(sortBy) {
+        this.sortBy = sortBy;
+        this.updateFilteredHistory();
+    }
+
+    updateFilteredHistory() {
+        let filteredDocuments = [...this.allDocuments];
+
+        // Apply search filter
+        if (this.searchQuery) {
+            filteredDocuments = filteredDocuments.filter(doc => 
+                doc.filename.toLowerCase().includes(this.searchQuery)
+            );
+        }
+
+        // Apply sorting
+        filteredDocuments.sort((a, b) => {
+            switch (this.sortBy) {
+                case 'name':
+                    return a.filename.localeCompare(b.filename);
+                case 'uploadDate':
+                    return new Date(b.uploadDate) - new Date(a.uploadDate);
+                case 'lastAccessed':
+                    return new Date(b.lastAccessed) - new Date(a.lastAccessed);
+                case 'fileSize':
+                    return b.fileSize - a.fileSize;
+                case 'questionCount':
+                    return b.questionCount - a.questionCount;
+                default:
+                    return new Date(b.uploadDate) - new Date(a.uploadDate);
+            }
+        });
+
+        this.startScreen.updateHistory(filteredDocuments);
     }
 }
 

@@ -54,6 +54,24 @@
 
 ## 🆕 New Features
 
+### Search & Sort Functionality
+- **Smart Search Bar**: Real-time document search with debounced input (300ms delay)
+- **Multiple Sort Options**: Sort documents by:
+  - Name (alphabetical)
+  - Upload Date (newest first)
+  - Last Access Date (most recent first)
+  - File Size (largest first)
+  - Question Count (most questions first)
+- **Enhanced User Experience**: 
+  - Search icon for clear functionality
+  - Clear button (✕) appears when typing
+  - **Always visible** on start screen for immediate access
+  - **Left-aligned** in header for better accessibility
+  - **Clickable header** - click anywhere on header to focus search
+  - **Keyboard shortcut** - Ctrl/Cmd + K to focus search
+  - Responsive layout for mobile devices
+- **Persistent State**: Search and sort preferences maintained during session
+
 ### Footer
 - Added informative footer with:
   - Motivational message
@@ -123,8 +141,9 @@
 - **Shadow System**: 5 shadow levels with color-tinted variants
 - **Animations**: 3 new keyframe animations
 - **Component Updates**: 12+ major component redesigns
-- **New Features**: Footer, tooltips framework, enhanced accessibility
-- **Lines of CSS**: Added ~300 lines of polished styles
+- **New Features**: Search & sort functionality, footer, tooltips framework, enhanced accessibility
+- **Search Implementation**: Debounced search, 5 sort options, responsive design
+- **Lines of CSS**: Added ~400 lines of polished styles
 
 ## 🚀 Result
 

@@ -100,6 +100,9 @@ class StartScreen extends BaseComponent {
         };
 
         card.innerHTML = `
+            <div class="document-card-icon">
+                <img src="https://zi7og4majl.ufs.sh/f/l0xTiWVZiWdtcjXQjR6M752m9pxOrYokRuAgPflX03SeWET1" alt="Document icon" class="document-icon">
+            </div>
             <div class="document-card-info">
                 <div class="document-card-title">${docData.filename}</div>
                 <div class="document-card-meta">
