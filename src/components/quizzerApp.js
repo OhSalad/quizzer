@@ -97,8 +97,15 @@ class QuizzerApp extends HTMLElement {
     }
 
     handleFile(file) {
-        if (!file || (file.type && file.type !== 'application/json' && !file.name.endsWith('.json'))) {
-            alert('Please drop or select a valid JSON file.');
+        // Accept explicit JSON files or text files that may contain JSON (e.g., .txt)
+        const isJsonMime = file?.type === 'application/json';
+        const isTextMime = file?.type?.startsWith?.('text/');
+        const lowerName = file?.name?.toLowerCase?.() ?? '';
+        const isJsonExt = lowerName.endsWith('.json');
+        const isTxtExt = lowerName.endsWith('.txt') || lowerName.endsWith('.text');
+
+        if (!file || (!isJsonMime && !isTextMime && !isJsonExt && !isTxtExt)) {
+            alert('Please drop or select a valid JSON file, or a text file containing JSON (e.g. .txt).');
             return;
         }
 

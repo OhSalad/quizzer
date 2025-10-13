@@ -14,9 +14,9 @@ class StartScreen extends BaseComponent {
         container.id = 'start-screen';
         container.innerHTML = `
             <h1>Welcome to Quizzer</h1>
-            <p>Drag and drop your JSON file onto the button, or click to select.</p>
-            <button id="upload-button">Upload JSON File</button>
-            <input type="file" id="file-input" accept=".json" class="hidden">
+            <p>Drag and drop a JSON or text file (containing JSON) onto the button, or click to select.</p>
+            <button id="upload-button">Upload JSON/Text File</button>
+            <input type="file" id="file-input" accept=".json,.txt,text/*,application/json" class="hidden">
             <div id="history-section">
                 <h2>Recent Documents</h2>
                 <div id="history-container"></div>
